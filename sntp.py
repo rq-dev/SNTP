@@ -121,16 +121,11 @@ class Message:
 
     def to_bytes(self) -> bytearray:
         res = bytearray()
-        first_byte = (bin(self.li)[2:]).zfill(2) + \
-                     (bin(self.vn)[2:]).zfill(3) + \
-                     (bin(self.mode)[2:]).zfill(3)
-        res += int(first_byte, 2).to_bytes(1, 'big')
-        res += self.stratum.to_bytes(1, 'big')
-        res += self.poll.to_bytes(1, 'big')
-        res += self.precision.to_bytes(1, 'big')
+        first_byte = (bin(self.li)[2:]).zfill(2) + (bin(self.vn)[2:]).zfill(3) + (bin(self.mode)[2:]).zfill(3)
+        res += int(first_byte, 2).to_bytes(1, 'big') + self.stratum.to_bytes(1, 'big')
+        res += self.poll.to_bytes(1, 'big') + self.precision.to_bytes(1, 'big')
         res += Message.encode_timestamp_format(self.root_delay, 4)
-        a = Message.encode_timestamp_format(self.root_dispersion, 4)
-        res += a
+        res += Message.encode_timestamp_format(self.root_dispersion, 4)
         res += self.reference_identifier.encode('utf-8')
         res += Message.encode_timestamp_format(self.reference_timestamp, 8)
         res += Message.encode_timestamp_format(self.originate_timestamp, 8)
